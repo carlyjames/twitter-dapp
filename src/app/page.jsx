@@ -19,7 +19,7 @@ function App() {
     try {
 
       const maxTweetLength = await contractInstance.getTweetLength();
-      setMaxTweetLength(maxTweetLength);
+      // setMaxTweetLength(maxTweetLength);
 
       const allTweets = await contractInstance.getAllTweets(address);
 
@@ -85,7 +85,6 @@ function App() {
       setMessage('Tweet created successfully');
       setTweetText("");
 
-      // fetch tweets after creating a new one
       await fetchTweetsForAddress(contract, signer);
 
     } catch (err) {
@@ -154,7 +153,7 @@ function App() {
               placeholder="What's happening?"
               value={tweetText}
               onChange={(e) => setTweetText(e.target.value)}
-              maxLength={maxTweetLength}
+              maxLength={280}
             />
 
             <div className="flex items-center gap-4">
@@ -162,7 +161,7 @@ function App() {
                 {tweetLoading ? 'Tweeting...' : 'Tweet'}
               </Button>
               <span className="text-sm text-gray-500">
-                {tweetText.length}/{maxTweetLength}
+                {tweetText.length}/280
               </span>
             </div>
           </div>
