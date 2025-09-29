@@ -153,7 +153,7 @@ function App() {
               placeholder="What's happening?"
               value={tweetText}
               onChange={(e) => setTweetText(e.target.value)}
-              maxLength={280}
+              maxLength={maxTweetLength}
             />
 
             <div className="flex items-center gap-4">
@@ -161,7 +161,7 @@ function App() {
                 {tweetLoading ? 'Tweeting...' : 'Tweet'}
               </Button>
               <span className="text-sm text-gray-500">
-                {tweetText.length}/280
+                {tweetText.length}/{maxTweetLength}
               </span>
             </div>
           </div>
