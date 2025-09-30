@@ -3,8 +3,10 @@
 import React, { useState } from "react";
 import { getContract } from "./contract";
 import { Button } from "../components/ui/button";
+import { useRouter } from "next/navigation";
 
 function App() {
+  const router = useRouter()
   const [message, setMessage] = useState("");
   const [signer, setSigner] = useState("");
   const [contract, setContract] = useState(null);
@@ -135,6 +137,25 @@ function App() {
     }
   }
 
+  // disconnect wallet function
+  async function removeSigner() {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_revokePermissions',
+        params: [
+          {
+            eth_accounts: {},
+          },
+        ],
+      });
+      console.log("Signer and contract removed");
+      window.location.reload();
+    } catch (err) {
+      console.log("Error removing signer and contract:", err);
+
+    }
+  }
+
   return (
     <div className="w-full h-full flex flex-col items-center p-4 gap-4">
       {!signer ? (
@@ -145,6 +166,7 @@ function App() {
         <div className="w-full h-full flex flex-col items-start gap-4">
           <div className="flex items-center gap-4">
             <p>Connected: {signer}</p>
+            <Button onClick={removeSigner}>Disconnect</Button>
           </div>
 
           <div className="w-full flex flex-col items-start gap-4">
@@ -153,7 +175,7 @@ function App() {
               placeholder="What's happening?"
               value={tweetText}
               onChange={(e) => setTweetText(e.target.value)}
-              maxLength={maxTweetLength}
+              maxLength={280}
             />
 
             <div className="flex items-center gap-4">
