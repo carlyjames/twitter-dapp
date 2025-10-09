@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { getContract } from "./contract";
 import { Button } from "../components/ui/button";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 function App() {
   const router = useRouter()
@@ -15,6 +16,8 @@ function App() {
   const [tweetText, setTweetText] = useState("");
   const [tweets, setTweets] = useState([]);
   const [maxTweetLength, setMaxTweetLength] = useState(0);
+  const [likes, setLikes] = useState(0);
+  const options = { day: 'numeric', month: 'long', year: 'numeric' };
 
   // helper Function to fetch tweets for a given address after wallet connection
   const fetchTweetsForAddress = async (contractInstance, address) => {
@@ -74,7 +77,7 @@ function App() {
     } finally {
       setLoading(false);
     }
-  }
+  } 
 
   // Function to create a tweet
   async function createTweet() {
@@ -100,7 +103,6 @@ function App() {
   // Function to fetch tweets for the connected address
   async function fetchTweets() {
     try {
-
 
       const allTweets = await contract.getAllTweets(signer);
 
@@ -156,6 +158,20 @@ function App() {
     }
   }
 
+  async function likeTweet(id, author) {
+    // const author = signer;
+    try {
+      const tx = await contract.likeTweet(id, author);
+      await tx.wait();
+      toast.success('Tweet liked successfully');
+      const AllLikes = await contract.getAllLikes(author);
+      setLikes(AllLikes);
+
+    } catch (err) {
+      toast.error('Error liking tweet: ' + err.message);
+    }
+  }
+
   return (
     <div className="w-full h-full flex flex-col items-center p-4 gap-4">
       {!signer ? (
@@ -199,12 +215,13 @@ function App() {
                   {tweets.map((tweet) => (
                     <div key={tweet.index} className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
                       <div className=" text-end items-end mb-2">
-                        <span className="text-xs text-gray-400">{tweet.timestamp}</span>
+                        <span className="text-xs text-gray-400">{new Date(tweet.timestamp).toLocaleDateString('en-US', options)}</span>
                       </div>
                       <p className="text-gray-800 mb-2">{tweet.content}</p>
                       <div className="flex justify-between items-center text-sm text-gray-500">
                         <span>By: {tweet.author.slice(0, 6)}...{tweet.author.slice(-4)}</span>
-                        <span> {tweet.likes} likes</span>
+                        <span> {likes || tweet.likes} likes</span>
+                        <Button className='bg-white hover:bg-white' size="sm" onClick={() => likeTweet(tweet.id, tweet.author)}>❤️</Button>
                       </div>
                     </div>
                   ))}

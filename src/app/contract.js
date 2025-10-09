@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import contractABI from "../abi/MyContract.json";
 import { toast } from "sonner";
 
-const contractAddress = "0xe34D6c3709f29FcF4B592f950c9c5aB0A51F3fA5"; 
+const contractAddress = "0x1EB889279FC134edf68B0bA81da78B5B0Bd64b33"; 
 
 export async function connectWallet() {
   try {
